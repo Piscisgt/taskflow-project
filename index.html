@@ -1,67 +1,27 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Taskflow</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-
-<body>
-
-<header class="header">
-  <h1>Taskflow</h1>
-  <p>Organiza tu día</p>
+<header>
+  <h1>TaskFlow</h1>
 </header>
-
-<main class="layout">
-
-  <aside class="sidebar">
-    <h2>Filtros</h2>
-
-    <nav>
-      <ul>
-        <li>Todas</li>
-        <li>Prioridad alta</li>
-        <li>Trabajo</li>
-        <li>Personal</li>
-      </ul>
-    </nav>
-  </aside>
-
-  <section class="tasks">
-
-    <h2>Mis tareas</h2>
-
-    <div class="task-card high">
-      <div class="task-info">
-        <h3>Preparar reunión del proyecto</h3>
-        <p>Categoría: Trabajo</p>
-      </div>
-
-      <span class="badge">Alta</span>
-    </div>
-
-    <div class="task-card medium">
-      <div class="task-info">
-        <h3>Estudiar</h3>
-        <p>Categoría: Estudio</p>
-      </div>
-
-      <span class="badge">Media</span>
-    </div>
-
-    <div class="task-card low">
-      <div class="task-info">
-        <h3>Comprar comida</h3>
-        <p>Categoría: Personal</p>
-      </div>
-
-      <span class="badge">Baja</span>
-    </div>
-
-  </section>
-
+<main>
+<section class="task-input">
+<form id="task-form">
+<label for="task-title">Nueva tarea</label>
+<input id="task-title" type="text" placeholder="Escribe una tarea">
+<button type="submit">Añadir</button>
+</form>
+</section>
+<section>
+<ul id="task-list"></ul>
+</section>
 </main>
+<<<<<<< HEAD:index.html
 
 </body>
 </html>
+=======
+<aside>
+<h2>Estadísticas</h2>
+<p>Total: <span id="total">0</span></p>
+<p>Completadas: <span id="completed">0</span></p>
+<p>Pendientes: <span id="pending">0</span></p>
+</aside>
+>>>>>>> 4eba1ae (taskflow project):Index.html
