@@ -1,27 +1,47 @@
-<header>
-  <h1>TaskFlow</h1>
-</header>
-<main>
-<section class="task-input">
-<form id="task-form">
-<label for="task-title">Nueva tarea</label>
-<input id="task-title" type="text" placeholder="Escribe una tarea">
-<button type="submit">Añadir</button>
-</form>
-</section>
-<section>
-<ul id="task-list"></ul>
-</section>
-</main>
-<<<<<<< HEAD:index.html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>TaskFlow</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 
+</head>
+<body class="bg-gray-100">
+
+<header class="bg-indigo-600 text-white p-4">
+  <h1 class="text-2xl font-bold">TaskFlow</h1>
+</header>
+
+<main class="flex flex-col md:flex-row p-4 gap-4">
+  <div class="flex-1">
+    <section class="mb-4">
+      <form id="task-form" class="flex gap-2">
+        <input 
+          id="task-title" 
+          type="text" 
+          placeholder="Escribe una tarea"
+          class="flex-1 p-2 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        >
+        <button 
+          type="submit"
+          class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
+        >
+          Añadir
+        </button>
+      </form>
+    </section>
+    <section>
+      <ul id="task-list" class="space-y-2"></ul>
+    </section>
+  </div>
+  <aside class="bg-white p-4 rounded shadow w-full md:w-64">
+    <h2 class="text-lg font-bold mb-2">Estadísticas</h2>
+
+    <p>Total: <span id="total">0</span></p>
+    <p>Completadas: <span id="completed">0</span></p>
+    <p>Pendientes: <span id="pending">0</span></p>
+  </aside>
+
+</main>
 </body>
 </html>
-=======
-<aside>
-<h2>Estadísticas</h2>
-<p>Total: <span id="total">0</span></p>
-<p>Completadas: <span id="completed">0</span></p>
-<p>Pendientes: <span id="pending">0</span></p>
-</aside>
->>>>>>> 4eba1ae (taskflow project):Index.html
