@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <title>TaskFlow</title>
   <script src="https://cdn.tailwindcss.com"></script>
-
 </head>
+
 <body class="bg-gray-100">
 
 <header class="bg-indigo-600 text-white p-4">
@@ -13,7 +13,10 @@
 </header>
 
 <main class="flex flex-col md:flex-row p-4 gap-4">
+  
   <div class="flex-1">
+
+    <!-- FORMULARIO -->
     <section class="mb-4">
       <form id="task-form" class="flex gap-2">
         <input 
@@ -30,10 +33,52 @@
         </button>
       </form>
     </section>
+
+    <!-- FILTROS -->
+    <div class="flex flex-wrap gap-2 mb-4">
+      <button id="filter-all" class="px-3 py-1 bg-gray-300 rounded hover:bg-gray-400">
+        Todas
+      </button>
+      <button id="filter-completed" class="px-3 py-1 bg-green-300 rounded hover:bg-green-400">
+        Completadas
+      </button>
+      <button id="filter-pending" class="px-3 py-1 bg-yellow-300 rounded hover:bg-yellow-400">
+        Pendientes
+      </button>
+    </div>
+
+    <!-- BUSCADOR -->
+    <input 
+      id="search-input" 
+      type="text" 
+      placeholder="Buscar tarea..."
+      class="w-full p-2 mb-4 border rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
+    >
+
+    <!-- ACCIONES GLOBALES -->
+    <div class="flex gap-2 mb-4">
+      <button 
+        id="complete-all"
+        class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition"
+      >
+        Completar todas
+      </button>
+      <button 
+        id="clear-completed"
+        class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition"
+      >
+        Borrar completadas
+      </button>
+    </div>
+
+    <!-- LISTA -->
     <section>
       <ul id="task-list" class="space-y-2"></ul>
     </section>
+
   </div>
+
+  <!-- SIDEBAR -->
   <aside class="bg-white p-4 rounded shadow w-full md:w-64">
     <h2 class="text-lg font-bold mb-2">Estadísticas</h2>
 
@@ -43,6 +88,7 @@
   </aside>
 
 </main>
+
 <script src="app.js"></script>
 </body>
 </html>
