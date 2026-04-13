@@ -9,7 +9,19 @@ const totalElement = document.querySelector("#total")
 const completedElement = document.querySelector("#completed")
 const pendingElement = document.querySelector("#pending")
 
+// NUEVOS SELECTORES
+const filterAllBtn = document.querySelector("#filter-all")
+const filterCompletedBtn = document.querySelector("#filter-completed")
+const filterPendingBtn = document.querySelector("#filter-pending")
+
+const searchInput = document.querySelector("#search-input")
+
+const completeAllBtn = document.querySelector("#complete-all")
+const clearCompletedBtn = document.querySelector("#clear-completed")
+
 let tasks = []
+let currentFilter = "all"
+let searchText = ""
 
 // =====================
 // EVENTOS
@@ -17,14 +29,43 @@ let tasks = []
 
 taskForm.addEventListener("submit", handleAddTask)
 
+// FILTROS
+filterAllBtn.addEventListener("click", () => {
+  currentFilter = "all"
+  renderTasks()
+})
+
+filterCompletedBtn.addEventListener("click", () => {
+  currentFilter = "completed"
+  renderTasks()
+})
+
+filterPendingBtn.addEventListener("click", () => {
+  currentFilter = "pending"
+  renderTasks()
+})
+
+// BUSCADOR
+searchInput.addEventListener("input", (e) => {
+  searchText = e.target.value.toLowerCase()
+  renderTasks()
+})
+
+// ACCIONES GLOBALES
+completeAllBtn.addEventListener("click", () => {
+  tasks = tasks.map(t => ({ ...t, completed: true }))
+  updateApp()
+})
+
+clearCompletedBtn.addEventListener("click", () => {
+  tasks = tasks.filter(t => !t.completed)
+  updateApp()
+})
+
 // =====================
 // FUNCIONES PRINCIPALES
 // =====================
 
-/**
- * Maneja el envío del formulario para añadir tareas
- * @param {Event} event
- */
 function handleAddTask(event) {
   event.preventDefault()
 
@@ -41,11 +82,6 @@ function handleAddTask(event) {
   taskForm.reset()
 }
 
-/**
- * Crea una nueva tarea
- * @param {string} title
- * @returns {Object}
- */
 function createTask(title) {
   return {
     id: Date.now(),
@@ -55,11 +91,6 @@ function createTask(title) {
   }
 }
 
-/**
- * Valida el título de la tarea
- * @param {string} title
- * @returns {boolean}
- */
 function validateTask(title) {
   if (title === "") {
     alert("La tarea no puede estar vacía")
@@ -74,23 +105,35 @@ function validateTask(title) {
   return true
 }
 
-/**
- * Renderiza todas las tareas
- */
+// =====================
+// RENDER CON FILTROS Y BUSQUEDA
+// =====================
+
 function renderTasks() {
   taskList.innerHTML = ""
 
-  tasks.forEach(task => {
+  let filteredTasks = tasks
+
+  // FILTRO POR ESTADO
+  if (currentFilter === "completed") {
+    filteredTasks = filteredTasks.filter(t => t.completed)
+  }
+
+  if (currentFilter === "pending") {
+    filteredTasks = filteredTasks.filter(t => !t.completed)
+  }
+
+  // FILTRO POR TEXTO
+  filteredTasks = filteredTasks.filter(t =>
+    t.title.toLowerCase().includes(searchText)
+  )
+
+  filteredTasks.forEach(task => {
     const taskElement = createTaskElement(task)
     taskList.appendChild(taskElement)
   })
 }
 
-/**
- * Crea el elemento HTML de una tarea
- * @param {Object} task
- * @returns {HTMLElement}
- */
 function createTaskElement(task) {
   const li = document.createElement("li")
   li.className = "bg-white p-3 rounded shadow flex justify-between items-center"
@@ -110,11 +153,6 @@ function createTaskElement(task) {
   return li
 }
 
-/**
- * Crea los botones de acción de una tarea
- * @param {Object} task
- * @returns {HTMLElement}
- */
 function createTaskActions(task) {
   const container = document.createElement("div")
 
@@ -133,10 +171,6 @@ function createTaskActions(task) {
   return container
 }
 
-/**
- * Cambia el estado de completado de una tarea
- * @param {number} id
- */
 function toggleTask(id) {
   tasks = tasks.map(task =>
     task.id === id ? { ...task, completed: !task.completed } : task
@@ -145,21 +179,18 @@ function toggleTask(id) {
   updateApp()
 }
 
-/**
- * Elimina una tarea
- * @param {number} id
- */
 function deleteTask(id) {
   tasks = tasks.filter(task => task.id !== id)
   updateApp()
 }
 
-/**
- * Actualiza estadísticas
- */
+// =====================
+// STATS + STORAGE
+// =====================
+
 function updateStats() {
   const total = tasks.length
-  const completed = tasks.filter(task => task.completed).length
+  const completed = tasks.filter(t => t.completed).length
   const pending = total - completed
 
   totalElement.textContent = total
@@ -167,16 +198,10 @@ function updateStats() {
   pendingElement.textContent = pending
 }
 
-/**
- * Guarda tareas en LocalStorage
- */
 function saveTasks() {
   localStorage.setItem("tasks", JSON.stringify(tasks))
 }
 
-/**
- * Carga tareas desde LocalStorage
- */
 function loadTasks() {
   const data = localStorage.getItem("tasks")
 
@@ -187,9 +212,6 @@ function loadTasks() {
   updateApp()
 }
 
-/**
- * Actualiza toda la aplicación
- */
 function updateApp() {
   renderTasks()
   updateStats()
@@ -197,6 +219,6 @@ function updateApp() {
 }
 
 // =====================
-// INICIALIZACIÓN
+// INIT
 // =====================
 loadTasks()
