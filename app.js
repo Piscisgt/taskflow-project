@@ -18,6 +18,9 @@ const searchInput = document.querySelector("#search-input")
 const completeAllBtn = document.querySelector("#complete-all")
 const clearCompletedBtn = document.querySelector("#clear-completed")
 
+const loadingMessage = document.querySelector("#loading-message")
+const errorMessage = document.querySelector("#error-message")
+
 // =====================
 // CONFIG
 // =====================
@@ -75,6 +78,9 @@ clearCompletedBtn.addEventListener("click", () => {
 
 async function loadTasks() {
   try {
+    loadingMessage.classList.remove("hidden")
+    errorMessage.classList.add("hidden")
+
     const response = await fetch(API_URL)
 
     if (!response.ok) {
@@ -86,7 +92,11 @@ async function loadTasks() {
     updateApp()
   } catch (error) {
     console.error(error)
-    alert("Error al cargar tareas")
+
+    errorMessage.textContent = "No se pudieron cargar las tareas"
+    errorMessage.classList.remove("hidden")
+  } finally {
+    loadingMessage.classList.add("hidden")
   }
 }
 
