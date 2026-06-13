@@ -27,8 +27,21 @@ function deleteTask(id) {
   tasks = tasks.filter(task => task.id !== id)
 }
 
+function toggleTask(id) {
+  const task = tasks.find(task => task.id === id)
+
+  if (!task) {
+    throw new Error("NOT_FOUND")
+  }
+
+  task.completed = !task.completed
+
+  return task
+}
+
 module.exports = {
   getAllTasks,
   createTask,
-  deleteTask
+  deleteTask,
+  toggleTask
 }

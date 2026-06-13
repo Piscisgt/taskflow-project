@@ -10,4 +10,6 @@ router.post("/", taskController.createTask)
 
 router.delete("/:id", taskController.deleteTask)
 
+router.patch("/:id", taskController.toggleTask)
+
 module.exports = router

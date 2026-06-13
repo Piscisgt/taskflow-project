@@ -39,8 +39,21 @@ function deleteTask(req, res, next) {
   }
 }
 
+function toggleTask(req, res, next) {
+  try {
+    const id = Number(req.params.id)
+
+    const task = taskService.toggleTask(id)
+
+    res.status(200).json(task)
+  } catch (error) {
+    next(error)
+  }
+}
+
 module.exports = {
   getTasks,
   createTask,
-  deleteTask
+  deleteTask,
+  toggleTask
 }
