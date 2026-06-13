@@ -24,7 +24,7 @@ const errorMessage = document.querySelector("#error-message")
 // =====================
 // CONFIG
 // =====================
-const API_URL = "http://localhost:3000/api/v1/tasks"
+const API_URL = "https://taskflow-backend-nyzm.onrender.com/api/v1/tasks"
 
 let tasks = []
 let currentFilter = "all"
