@@ -9,7 +9,6 @@ const totalElement = document.querySelector("#total")
 const completedElement = document.querySelector("#completed")
 const pendingElement = document.querySelector("#pending")
 
-// NUEVOS SELECTORES
 const filterAllBtn = document.querySelector("#filter-all")
 const filterCompletedBtn = document.querySelector("#filter-completed")
 const filterPendingBtn = document.querySelector("#filter-pending")
@@ -18,6 +17,11 @@ const searchInput = document.querySelector("#search-input")
 
 const completeAllBtn = document.querySelector("#complete-all")
 const clearCompletedBtn = document.querySelector("#clear-completed")
+
+// =====================
+// CONFIG
+// =====================
+const API_URL = "http://localhost:3000/api/v1/tasks"
 
 let tasks = []
 let currentFilter = "all"
@@ -29,7 +33,6 @@ let searchText = ""
 
 taskForm.addEventListener("submit", handleAddTask)
 
-// FILTROS
 filterAllBtn.addEventListener("click", () => {
   currentFilter = "all"
   renderTasks()
@@ -45,51 +48,97 @@ filterPendingBtn.addEventListener("click", () => {
   renderTasks()
 })
 
-// BUSCADOR
 searchInput.addEventListener("input", (e) => {
   searchText = e.target.value.toLowerCase()
   renderTasks()
 })
 
-// ACCIONES GLOBALES
+// Estas funciones siguen siendo locales por ahora
 completeAllBtn.addEventListener("click", () => {
-  tasks = tasks.map(t => ({ ...t, completed: true }))
+  tasks = tasks.map(task => ({
+    ...task,
+    completed: true
+  }))
+
   updateApp()
 })
 
 clearCompletedBtn.addEventListener("click", () => {
-  tasks = tasks.filter(t => !t.completed)
+  tasks = tasks.filter(task => !task.completed)
+
   updateApp()
 })
 
 // =====================
-// FUNCIONES PRINCIPALES
+// API
 // =====================
 
-function handleAddTask(event) {
+async function loadTasks() {
+  try {
+    const response = await fetch(API_URL)
+
+    if (!response.ok) {
+      throw new Error("Error al cargar tareas")
+    }
+
+    tasks = await response.json()
+
+    updateApp()
+  } catch (error) {
+    console.error(error)
+    alert("Error al cargar tareas")
+  }
+}
+
+async function handleAddTask(event) {
   event.preventDefault()
 
   const title = taskInput.value.trim()
 
   if (!validateTask(title)) return
 
-  const newTask = createTask(title)
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ title })
+    })
 
-  tasks.push(newTask)
+    if (!response.ok) {
+      throw new Error("Error al crear tarea")
+    }
 
-  updateApp()
+    await loadTasks()
 
-  taskForm.reset()
-}
-
-function createTask(title) {
-  return {
-    id: Date.now(),
-    title,
-    completed: false,
-    createdAt: new Date()
+    taskForm.reset()
+  } catch (error) {
+    console.error(error)
+    alert("No se pudo crear la tarea")
   }
 }
+
+async function deleteTask(id) {
+  try {
+    const response = await fetch(`${API_URL}/${id}`, {
+      method: "DELETE"
+    })
+
+    if (!response.ok) {
+      throw new Error("Error al eliminar")
+    }
+
+    await loadTasks()
+  } catch (error) {
+    console.error(error)
+    alert("No se pudo eliminar la tarea")
+  }
+}
+
+// =====================
+// VALIDACIONES
+// =====================
 
 function validateTask(title) {
   if (title === "") {
@@ -106,7 +155,7 @@ function validateTask(title) {
 }
 
 // =====================
-// RENDER CON FILTROS Y BUSQUEDA
+// RENDER
 // =====================
 
 function renderTasks() {
@@ -114,18 +163,16 @@ function renderTasks() {
 
   let filteredTasks = tasks
 
-  // FILTRO POR ESTADO
   if (currentFilter === "completed") {
-    filteredTasks = filteredTasks.filter(t => t.completed)
+    filteredTasks = filteredTasks.filter(task => task.completed)
   }
 
   if (currentFilter === "pending") {
-    filteredTasks = filteredTasks.filter(t => !t.completed)
+    filteredTasks = filteredTasks.filter(task => !task.completed)
   }
 
-  // FILTRO POR TEXTO
-  filteredTasks = filteredTasks.filter(t =>
-    t.title.toLowerCase().includes(searchText)
+  filteredTasks = filteredTasks.filter(task =>
+    task.title.toLowerCase().includes(searchText)
   )
 
   filteredTasks.forEach(task => {
@@ -136,7 +183,8 @@ function renderTasks() {
 
 function createTaskElement(task) {
   const li = document.createElement("li")
-  li.className = "bg-white p-3 rounded shadow flex justify-between items-center"
+  li.className =
+    "bg-white p-3 rounded shadow flex justify-between items-center"
 
   const title = document.createElement("span")
   title.textContent = task.title
@@ -159,11 +207,17 @@ function createTaskActions(task) {
   const completeBtn = document.createElement("button")
   completeBtn.textContent = "✔"
   completeBtn.className = "mr-2"
-  completeBtn.addEventListener("click", () => toggleTask(task.id))
+
+  completeBtn.addEventListener("click", () => {
+    toggleTask(task.id)
+  })
 
   const deleteBtn = document.createElement("button")
   deleteBtn.textContent = "❌"
-  deleteBtn.addEventListener("click", () => deleteTask(task.id))
+
+  deleteBtn.addEventListener("click", () => {
+    deleteTask(task.id)
+  })
 
   container.appendChild(completeBtn)
   container.appendChild(deleteBtn)
@@ -171,26 +225,24 @@ function createTaskActions(task) {
   return container
 }
 
+// Temporal hasta crear PATCH en backend
 function toggleTask(id) {
   tasks = tasks.map(task =>
-    task.id === id ? { ...task, completed: !task.completed } : task
+    task.id === id
+      ? { ...task, completed: !task.completed }
+      : task
   )
 
   updateApp()
 }
 
-function deleteTask(id) {
-  tasks = tasks.filter(task => task.id !== id)
-  updateApp()
-}
-
 // =====================
-// STATS + STORAGE
+// STATS
 // =====================
 
 function updateStats() {
   const total = tasks.length
-  const completed = tasks.filter(t => t.completed).length
+  const completed = tasks.filter(task => task.completed).length
   const pending = total - completed
 
   totalElement.textContent = total
@@ -198,27 +250,13 @@ function updateStats() {
   pendingElement.textContent = pending
 }
 
-function saveTasks() {
-  localStorage.setItem("tasks", JSON.stringify(tasks))
-}
-
-function loadTasks() {
-  const data = localStorage.getItem("tasks")
-
-  if (data) {
-    tasks = JSON.parse(data)
-  }
-
-  updateApp()
-}
-
 function updateApp() {
   renderTasks()
   updateStats()
-  saveTasks()
 }
 
 // =====================
 // INIT
 // =====================
+
 loadTasks()
