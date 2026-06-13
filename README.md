@@ -40,6 +40,7 @@ Backend: (AÑADE AQUÍ LA URL DEL BACKEND CUANDO LO DESPLIEGUES)
 * Cors
 * Dotenv
 * Nodemon
+* Render (https://taskflow-backend-nyzm.onrender.com)
 
 ### Herramientas
 
