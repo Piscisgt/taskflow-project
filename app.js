@@ -225,15 +225,21 @@ function createTaskActions(task) {
   return container
 }
 
-// Temporal hasta crear PATCH en backend
-function toggleTask(id) {
-  tasks = tasks.map(task =>
-    task.id === id
-      ? { ...task, completed: !task.completed }
-      : task
-  )
+async function toggleTask(id) {
+  try {
+    const response = await fetch(`${API_URL}/${id}`, {
+      method: "PATCH"
+    })
 
-  updateApp()
+    if (!response.ok) {
+      throw new Error("Error al actualizar tarea")
+    }
+
+    await loadTasks()
+  } catch (error) {
+    console.error(error)
+    alert("No se pudo actualizar la tarea")
+  }
 }
 
 // =====================
